@@ -25,7 +25,7 @@ type Config struct {
 	RabbitVHost    string
 }
 
-func Load() *Config {
+func LoadEnv() *Config {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(".env not found")
 	}

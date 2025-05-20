@@ -5,22 +5,20 @@ import (
 	"time"
 )
 
-type Transaction struct {
+type TransactionEntity struct {
 	ID        uuid.UUID
 	FromAccID uuid.UUID
 	ToAccID   uuid.UUID
 	Amount    float64
-	Success   bool
 	CreatedAt time.Time
 }
 
-func NewTransaction(fromID, toID uuid.UUID, amount float64) *Transaction {
-	return &Transaction{
+func NewTransactionEntity(fromID, toID uuid.UUID, amount float64) *TransactionEntity {
+	return &TransactionEntity{
 		ID:        uuid.New(),
 		FromAccID: fromID,
 		ToAccID:   toID,
 		Amount:    amount,
-		Success:   false,
 		CreatedAt: time.Now(),
 	}
 }
