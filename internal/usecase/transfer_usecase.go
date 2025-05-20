@@ -8,11 +8,11 @@ import (
 )
 
 type TransferService struct {
-	accountRepo     repository.AccountRepository
+	accountRepo     repository.AccountRepo
 	transactionRepo repository.TransRepo
 }
 
-func NewTransferService(a repository.AccountRepository, t repository.TransRepo) *TransferService {
+func NewTransferService(a repository.AccountRepo, t repository.TransRepo) *TransferService {
 	return &TransferService{
 		accountRepo:     a,
 		transactionRepo: t,

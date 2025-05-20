@@ -24,3 +24,14 @@ func (repo *AccPostgresRepo) GetByID(c context.Context, id uuid.UUID) (*model.Ac
 	return &account, nil
 
 }
+
+func (repo *AccPostgresRepo) GetBalance(c context.Context, id uuid.UUID) (float64, error) {
+	var balance float64
+
+	err := repo.db.WithContext(c).Select("balance").Where("id = ?", id).Take(&balance).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return balance, nil
+}

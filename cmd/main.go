@@ -11,6 +11,7 @@ import (
 func main() {
 	cfg := config.LoadEnv()
 	db, err := config.InitPostgres(cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBPort)
+	rdb := config.NewRedisClient(cfg.RedisHost + ":" + cfg.RedisPort)
 
 	if err != nil {
 		log.Fatal("Couldn't connect to database:", err.Error())

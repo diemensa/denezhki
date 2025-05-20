@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type AccountRepository interface {
+type AccountRepo interface {
 	GetByID(c context.Context, id uuid.UUID) (*model.Account, error)
+	GetBalance(c context.Context, id uuid.UUID) (float64, error)
 }
