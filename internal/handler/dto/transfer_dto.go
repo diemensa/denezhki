@@ -10,6 +10,5 @@ type TransferRequest struct {
 
 type TransferResponse struct {
 	TransactionID uuid.UUID `json:"transaction_id"`
-	Success       bool      `json:"success"`
 	Message       string    `json:"message"`
 }

@@ -37,7 +37,8 @@ func (s *TransferService) Transfer(c context.Context, fromID, toID uuid.UUID, am
 	fromAccount.Balance -= amount
 	toAccount.Balance += amount
 
-	err = s.transactionRepo.PerformTransfer(c, fromAccount.ID, toAccount.ID,
+	err = s.transactionRepo.PerformTransfer(c,
+		fromAccount.ID, toAccount.ID,
 		fromAccount.Balance, toAccount.Balance,
 		amount)
 

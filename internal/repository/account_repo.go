@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"github.com/diemensa/denezhki/internal/entity"
+	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
 )
 
 type AccountRepository interface {
-	GetByID(c context.Context, id uuid.UUID) (*entity.Account, error)
+	GetByID(c context.Context, id uuid.UUID) (*model.Account, error)
 }

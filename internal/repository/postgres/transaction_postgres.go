@@ -21,13 +21,13 @@ func (repo *TransPostgresRepo) PerformTransfer(c context.Context,
 
 	return repo.db.Transaction(func(tx *gorm.DB) error {
 
-		if err := tx.WithContext(c).Model(&model.AccountModel{}).
+		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", fromID).
 			Update("balance", fromNewBalance).Error; err != nil {
 			return err
 		}
 
-		if err := tx.WithContext(c).Model(&model.AccountModel{}).
+		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", toID).
 			Update("balance", toNewBalance).Error; err != nil {
 			return err
