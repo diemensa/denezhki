@@ -6,6 +6,7 @@ import (
 	"github.com/diemensa/denezhki/internal/repository/postgres"
 	"github.com/diemensa/denezhki/internal/usecase"
 	"log"
+	"time"
 )
 
 func main() {
@@ -20,8 +21,9 @@ func main() {
 	transRepo := postgres.NewTransPostgresRepo(db)
 	accRepo := postgres.NewAccPostgresRepo(db)
 
-	service := usecase.NewTransferService(accRepo, transRepo)
+	transferService := usecase.NewTransferService(accRepo, transRepo)
+	accountService := usecase.NewAccountService(accRepo, rdb, 10*time.Minute)
 
-	r := handler.SetupRouter(service)
+	r := handler.SetupRouter(transferService)
 	r.Run(":" + cfg.Port)
 }

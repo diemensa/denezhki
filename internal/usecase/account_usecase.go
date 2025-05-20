@@ -1,8 +1,12 @@
 package usecase
 
 import (
+	"context"
+	"fmt"
 	"github.com/diemensa/denezhki/internal/repository"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
+	"strconv"
 	"time"
 )
 
@@ -18,4 +22,25 @@ func NewAccountService(a repository.AccountRepo, redisClient *redis.Client, ttl 
 		redisClient: redisClient,
 		cacheTTL:    ttl,
 	}
+}
+
+func (s *AccountService) GetBalance(c context.Context, id uuid.UUID) (float64, error) {
+	var balance float64
+
+	key := "balance" + id.String()
+	cache, err := s.redisClient.Get(c, key).Result()
+	if err == nil {
+		balance, err = strconv.ParseFloat(cache, 64)
+		if err == nil {
+			return balance, nil
+		}
+	}
+
+	balance, err = s.accountRepo.GetBalance(c, id)
+	if err != nil {
+		return 0, nil
+	}
+	err = s.redisClient.Set(c, key, fmt.Sprintf("%f", balance), s.cacheTTL).Err()
+
+	return balance, nil
 }
