@@ -7,6 +7,7 @@ import (
 )
 
 type AccountRepo interface {
-	GetByID(c context.Context, id uuid.UUID) (*model.Account, error)
-	GetBalance(c context.Context, id uuid.UUID) (float64, error)
+	GetAccByID(c context.Context, id uuid.UUID) (*model.Account, error)
+	GetUserByAccID(c context.Context, id uuid.UUID) (*model.User, error)
+	GetAccBalance(c context.Context, id uuid.UUID) (float64, error)
 }

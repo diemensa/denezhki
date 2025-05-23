@@ -20,9 +20,11 @@ func main() {
 
 	transRepo := postgres.NewTransPostgresRepo(db)
 	accRepo := postgres.NewAccPostgresRepo(db)
+	userRepo := postgres.NewUserPostgresRepo(db)
 
 	transferService := usecase.NewTransferService(accRepo, transRepo)
 	accountService := usecase.NewAccountService(accRepo, rdb, 10*time.Minute)
+	userService := usecase.NewUserService(userRepo)
 
 	r := handler.SetupRouter(transferService)
 	r.Run(":" + cfg.Port)

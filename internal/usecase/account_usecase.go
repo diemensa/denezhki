@@ -24,7 +24,7 @@ func NewAccountService(a repository.AccountRepo, redisClient *redis.Client, ttl 
 	}
 }
 
-func (s *AccountService) GetBalance(c context.Context, id uuid.UUID) (float64, error) {
+func (s *AccountService) GetAccBalance(c context.Context, id uuid.UUID) (float64, error) {
 	var balance float64
 
 	key := "balance" + id.String()
@@ -36,11 +36,12 @@ func (s *AccountService) GetBalance(c context.Context, id uuid.UUID) (float64, e
 		}
 	}
 
-	balance, err = s.accountRepo.GetBalance(c, id)
+	balance, err = s.accountRepo.GetAccBalance(c, id)
 	if err != nil {
 		return 0, nil
 	}
 	err = s.redisClient.Set(c, key, fmt.Sprintf("%f", balance), s.cacheTTL).Err()
-
 	return balance, nil
 }
+
+// TODO другие методы по аккаунтам
