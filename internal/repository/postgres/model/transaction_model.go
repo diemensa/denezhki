@@ -10,15 +10,17 @@ type Transaction struct {
 	FromAccID uuid.UUID `gorm:"type:uuid;not null"`
 	ToAccID   uuid.UUID `gorm:"type:uuid;not null"`
 	Amount    float64   `gorm:"not null"`
+	Success   bool      `gorm:"not null"`
 	CreatedAt time.Time `gorm:"not null"`
 }
 
-func NewTransaction(fromID, toID uuid.UUID, amount float64) *Transaction {
+func NewTransaction(transID, fromID, toID uuid.UUID, amount float64, success bool) *Transaction {
 	return &Transaction{
-		ID:        uuid.New(),
+		ID:        transID,
 		FromAccID: fromID,
 		ToAccID:   toID,
 		Amount:    amount,
+		Success:   success,
 		CreatedAt: time.Now(),
 	}
 }

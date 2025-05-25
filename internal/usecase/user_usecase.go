@@ -17,9 +17,15 @@ func NewUserService(u repository.UserRepo) *UserService {
 	}
 }
 
-func (u *UserService) GetUser(c context.Context, username string) (*model.User, error) {
+func (u *UserService) GetUserByID(c context.Context, userID uuid.UUID) (*model.User, error) {
 
-	return u.userRepo.GetUser(c, username)
+	return u.userRepo.GetUserByID(c, userID)
+
+}
+
+func (u *UserService) GetUserByUsername(c context.Context, username string) (*model.User, error) {
+
+	return u.userRepo.GetUserByUsername(c, username)
 
 }
 

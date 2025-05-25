@@ -5,6 +5,7 @@ import (
 	"github.com/diemensa/denezhki/internal/handler"
 	"github.com/diemensa/denezhki/internal/repository/postgres"
 	"github.com/diemensa/denezhki/internal/usecase"
+	"github.com/gin-gonic/gin"
 	"log"
 	"time"
 )
@@ -26,6 +27,11 @@ func main() {
 	accountService := usecase.NewAccountService(accRepo, rdb, 10*time.Minute)
 	userService := usecase.NewUserService(userRepo)
 
-	r := handler.SetupRouter(transferService)
+	r := gin.Default()
+
+	handler.SetupTransferRouters(r, transferService)
+	handler.SetupUserRouters(r, userService)
+	handler.SetupAccountRouters(r, accountService)
+
 	r.Run(":" + cfg.Port)
 }

@@ -19,7 +19,10 @@ func NewTransferService(a repository.AccountRepo, t repository.TransRepo) *Trans
 	}
 }
 
-func (s *TransferService) PerformTransfer(c context.Context, fromID, toID uuid.UUID, amount float64) error {
+func (s *TransferService) PerformTransfer(c context.Context,
+	transactionID, fromID, toID uuid.UUID,
+	amount float64) error {
+
 	fromAccount, err := s.accountRepo.GetAccByID(c, fromID)
 	if err != nil {
 		return fmt.Errorf("failed to get the sender's account: %w", err)
@@ -38,7 +41,7 @@ func (s *TransferService) PerformTransfer(c context.Context, fromID, toID uuid.U
 	toAccount.Balance += amount
 
 	err = s.transactionRepo.PerformTransfer(c,
-		fromAccount.ID, toAccount.ID,
+		transactionID, fromAccount.ID, toAccount.ID,
 		fromAccount.Balance, toAccount.Balance,
 		amount)
 

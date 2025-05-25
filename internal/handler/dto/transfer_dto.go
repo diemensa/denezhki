@@ -12,3 +12,16 @@ type TransferResponse struct {
 	TransactionID uuid.UUID `json:"transaction_id"`
 	Message       string    `json:"message"`
 }
+
+func NewTransferResponse(id uuid.UUID, success bool) *TransferResponse {
+	msg := "transfer failed"
+
+	if success {
+		msg = "transfer successful"
+	}
+
+	return &TransferResponse{
+		TransactionID: id,
+		Message:       msg,
+	}
+}

@@ -16,7 +16,19 @@ func NewUserPostgresRepo(db *gorm.DB) *UserPostgresRepo {
 	return &UserPostgresRepo{db: db}
 }
 
-func (repo *UserPostgresRepo) GetUser(c context.Context, username string) (*model.User, error) {
+func (repo *UserPostgresRepo) GetUserByID(c context.Context, userID uuid.UUID) (*model.User, error) {
+	var user model.User
+
+	err := repo.db.WithContext(c).Where("id = ?", userID).First(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (repo *UserPostgresRepo) GetUserByUsername(c context.Context, username string) (*model.User, error) {
 	var user model.User
 
 	err := repo.db.WithContext(c).Where("username = ?", username).First(&user).Error
@@ -25,7 +37,7 @@ func (repo *UserPostgresRepo) GetUser(c context.Context, username string) (*mode
 		return nil, err
 	}
 
-	return &user, err
+	return &user, nil
 }
 
 func (repo *UserPostgresRepo) GetUserAccounts(c context.Context, userID uuid.UUID) ([]model.Account, error) {
@@ -67,7 +79,9 @@ func (repo *UserPostgresRepo) CreateAccount(c context.Context, userID uuid.UUID)
 }
 
 func (repo *UserPostgresRepo) ValidatePassword(c context.Context, username, password string) error {
-	user, err := repo.GetUser(c, username)
+	var user model.User
+
+	err := repo.db.WithContext(c).Where("username = ?", username).First(&user).Error
 
 	if err != nil {
 		return err

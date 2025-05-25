@@ -16,7 +16,7 @@ func NewTransPostgresRepo(db *gorm.DB) *TransPostgresRepo {
 }
 
 func (repo *TransPostgresRepo) PerformTransfer(c context.Context,
-	fromID, toID uuid.UUID,
+	transactionID, fromID, toID uuid.UUID,
 	fromNewBalance, toNewBalance, amount float64) error {
 
 	return repo.db.Transaction(func(tx *gorm.DB) error {
@@ -24,22 +24,29 @@ func (repo *TransPostgresRepo) PerformTransfer(c context.Context,
 		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", fromID).
 			Update("balance", fromNewBalance).Error; err != nil {
+			repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
 			return err
 		}
 
 		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", toID).
 			Update("balance", toNewBalance).Error; err != nil {
+			repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
 			return err
 		}
 
-		transaction := model.NewTransaction(fromID, toID, amount)
-
-		if err := tx.WithContext(c).Create(&transaction).Error; err != nil {
-			return err
-		}
-
+		repo.LogTransaction(c, transactionID, fromID, toID, amount, true)
 		return nil
 	})
 
+}
+
+func (repo *TransPostgresRepo) LogTransaction(c context.Context,
+	transactionID, fromID, toID uuid.UUID,
+	amount float64,
+	success bool) {
+
+	transaction := model.NewTransaction(transactionID, fromID, toID, amount, success)
+
+	repo.db.WithContext(c).Create(&transaction)
 }
