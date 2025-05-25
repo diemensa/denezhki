@@ -23,7 +23,7 @@ func main() {
 	accRepo := postgres.NewAccPostgresRepo(db)
 	userRepo := postgres.NewUserPostgresRepo(db)
 
-	transferService := usecase.NewTransferService(accRepo, transRepo)
+	transferService := usecase.NewTransferService(accRepo, transRepo, rdb, 10*time.Minute)
 	accountService := usecase.NewAccountService(accRepo, rdb, 10*time.Minute)
 	userService := usecase.NewUserService(userRepo)
 
