@@ -26,24 +26,14 @@ func NewAccountService(a repository.AccountRepo, redisClient *redis.Client, ttl 
 }
 func (s *AccountService) GetAccByID(c context.Context, id uuid.UUID) (*model.Account, error) {
 
-	account, err := s.accountRepo.GetAccByID(c, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return account, err
+	return s.accountRepo.GetAccByID(c, id)
 
 }
 
 func (s *AccountService) GetUserByAccID(c context.Context, id uuid.UUID) (*model.User, error) {
-	user, err := s.accountRepo.GetUserByAccID(c, id)
 
-	if err != nil {
-		return nil, err
-	}
+	return s.accountRepo.GetUserByAccID(c, id)
 
-	return user, nil
 }
 
 func (s *AccountService) GetAccBalance(c context.Context, id uuid.UUID) (float64, error) {
