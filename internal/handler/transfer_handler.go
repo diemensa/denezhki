@@ -26,7 +26,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Transfer(c, req.FromID, req.ToID, req.Amount)
+	err = h.service.PerformTransfer(c, req.FromID, req.ToID, req.Amount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

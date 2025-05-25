@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/diemensa/denezhki/internal/repository"
+	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"strconv"
@@ -22,6 +23,27 @@ func NewAccountService(a repository.AccountRepo, redisClient *redis.Client, ttl 
 		redisClient: redisClient,
 		cacheTTL:    ttl,
 	}
+}
+func (s *AccountService) GetAccByID(c context.Context, id uuid.UUID) (*model.Account, error) {
+
+	account, err := s.accountRepo.GetAccByID(c, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return account, err
+
+}
+
+func (s *AccountService) GetUserByAccID(c context.Context, id uuid.UUID) (*model.User, error) {
+	user, err := s.accountRepo.GetUserByAccID(c, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *AccountService) GetAccBalance(c context.Context, id uuid.UUID) (float64, error) {
@@ -43,5 +65,3 @@ func (s *AccountService) GetAccBalance(c context.Context, id uuid.UUID) (float64
 	err = s.redisClient.Set(c, key, fmt.Sprintf("%f", balance), s.cacheTTL).Err()
 	return balance, nil
 }
-
-// TODO другие методы по аккаунтам
