@@ -32,7 +32,7 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}
@@ -55,7 +55,7 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	balance, err := h.service.GetAccBalance(c, accountID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}

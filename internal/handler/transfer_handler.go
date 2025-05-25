@@ -49,7 +49,7 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}
@@ -69,7 +69,7 @@ func (h *TransferHandler) HandleGetAllTransfers(c *gin.Context) {
 	transfers, err := h.service.GetAllAccountTransfers(c, accountID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": err.Error(),
 		})
 		return
 	}

@@ -19,11 +19,10 @@ func SetupUserRouters(r *gin.Engine, s *usecase.UserService) {
 
 	handler := NewUserHandler(s)
 
-	r.GET("/users/:username", handler.HandleGetUserByUsername)
 	r.GET("/users/:username/accounts", handler.HandleGetUserAccounts)
 	r.POST("/users", handler.HandleCreateUser)
 	r.POST("/users/:username/accounts", handler.HandleCreateAccount)
-	r.POST("/auth/login", handler.HandleValidatePassword)
+	// r.POST("/auth/login", handler.HandleValidatePassword)
 
 }
 
