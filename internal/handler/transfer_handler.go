@@ -35,3 +35,44 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewTransferResponse(transferID, true))
 
 }
+
+func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
+	idParam := c.Param("id")
+	transferID, err := uuid.Parse(idParam)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid UUID"})
+		return
+	}
+
+	transfer, err := h.service.GetTransferByID(c, transferID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, transfer)
+}
+
+func (h *TransferHandler) HandleGetAllTransfers(c *gin.Context) {
+	idParam := c.Param("id")
+	accountID, err := uuid.Parse(idParam)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid UUID"})
+		return
+	}
+
+	transfers, err := h.service.GetAllAccountTransfers(c, accountID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, transfers)
+}

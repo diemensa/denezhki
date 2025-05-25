@@ -9,8 +9,9 @@ func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
 
 	handler := NewTransferHandler(s)
 
-	r.POST("/transfer", handler.HandleTransfer)
-	r.GET("/transfer/:id", handler.GetTransfer)
+	r.POST("/transfers", handler.HandleTransfer)
+	r.GET("/transfers/:id", handler.HandleGetTransferByID)
+	r.GET("/transfers", handler.HandleGetAllTransfers)
 
 }
 

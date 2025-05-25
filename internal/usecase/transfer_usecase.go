@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/diemensa/denezhki/internal/repository"
+	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
 )
 
@@ -50,4 +51,17 @@ func (s *TransferService) PerformTransfer(c context.Context,
 	}
 
 	return nil
+}
+
+func (s *TransferService) GetTransferByID(c context.Context,
+	transactionID uuid.UUID) (*model.Transaction, error) {
+
+	return s.transactionRepo.GetTransferByID(c, transactionID)
+}
+
+func (s *TransferService) GetAllAccountTransfers(
+	c context.Context,
+	accountID uuid.UUID) ([]model.Transaction, error) {
+
+	return s.transactionRepo.GetAllAccountTransfers(c, accountID)
 }

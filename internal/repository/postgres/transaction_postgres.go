@@ -50,3 +50,31 @@ func (repo *TransPostgresRepo) LogTransaction(c context.Context,
 
 	repo.db.WithContext(c).Create(&transaction)
 }
+
+func (repo *TransPostgresRepo) GetTransferByID(c context.Context,
+	transactionID uuid.UUID) (*model.Transaction, error) {
+
+	var transfer model.Transaction
+
+	if err := repo.db.WithContext(c).First(&transfer, "id = ?", transactionID).Error; err != nil {
+		return nil, err
+	}
+
+	return &transfer, nil
+}
+
+func (repo *TransPostgresRepo) GetAllAccountTransfers(
+	c context.Context,
+	accountID uuid.UUID) ([]model.Transaction, error) {
+
+	var transfer []model.Transaction
+
+	if err := repo.db.WithContext(c).Where("from_acc_id = ?", accountID).
+		Or("to_acc_id = ?", accountID).
+		Find(&transfer).Error; err != nil {
+		return nil, err
+	}
+
+	return transfer, nil
+
+}
