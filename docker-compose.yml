@@ -15,15 +15,5 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
-      RABBITMQ_DEFAULT_VHOST: ${RABBIT_VHOST}
-    ports:
-      - "${RABBIT_PORT}:5672"
-      - "15672:15672"
-
 volumes:
   pgdata:
