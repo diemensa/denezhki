@@ -69,9 +69,15 @@ func (s *TransferService) GetTransferByID(c context.Context,
 
 func (s *TransferService) GetAllAccountTransfers(
 	c context.Context,
-	accountID uuid.UUID) ([]model.Transaction, error) {
+	alias, owner string) ([]model.Transaction, error) {
 
-	return s.transactionRepo.GetAllAccountTransfers(c, accountID)
+	account, err := s.accountRepo.GetAccByAliasOwner(c, alias, owner)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.transactionRepo.GetAllAccountTransfers(c, account.ID)
 }
 
 func updateBalanceCache(c context.Context, rdb *redis.Client,

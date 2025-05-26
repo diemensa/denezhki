@@ -11,7 +11,7 @@ type Transaction struct {
 	ToAccID   uuid.UUID `gorm:"type:uuid;not null"`
 	Amount    float64   `gorm:"not null"`
 	Success   bool      `gorm:"not null"`
-	CreatedAt time.Time `gorm:"not null"`
+	CreatedAt time.Time `gorm:"not null;autoCreateTime"`
 }
 
 func NewTransaction(transID, fromID, toID uuid.UUID, amount float64, success bool) *Transaction {
@@ -21,6 +21,5 @@ func NewTransaction(transID, fromID, toID uuid.UUID, amount float64, success boo
 		ToAccID:   toID,
 		Amount:    amount,
 		Success:   success,
-		CreatedAt: time.Now(),
 	}
 }

@@ -11,26 +11,24 @@ func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
 
 	r.POST("/transfers", handler.HandleTransfer)
 	r.GET("/transfers/:id", handler.HandleGetTransferByID)
-	r.GET("/transfers", handler.HandleGetAllTransfers)
+	r.GET("/users/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
 
 }
 
-func SetupUserRouters(r *gin.Engine, s *usecase.UserService) {
+func SetupUserAccRouters(r *gin.Engine, userServ *usecase.UserService, accountServ *usecase.AccountService) {
 
-	handler := NewUserHandler(s)
+	handlerUser := NewUserHandler(userServ)
+	handlerAccount := NewAccountHandler(accountServ)
 
-	r.GET("/users/:username/accounts", handler.HandleGetUserAccounts)
-	r.POST("/users", handler.HandleCreateUser)
-	r.POST("/users/:username/accounts", handler.HandleCreateAccount)
-	// r.POST("/auth/login", handler.HandleValidatePassword)
+	// User Handlers
+	r.GET("/users/:username/accounts", handlerUser.HandleGetUserAccounts)
+	r.POST("/users", handlerUser.HandleCreateUser)
+	r.POST("/users/:username/accounts/", handlerUser.HandleCreateAccount)
+	// r.POST("/auth/login", handler.HandleValidatePassword) ручка для авторизации, сделать позже
 
-}
-
-func SetupAccountRouters(r *gin.Engine, s *usecase.AccountService) {
-
-	handler := NewAccountHandler(s)
-
-	r.GET("/accounts/:id", handler.HandleGetAccByID)
-	r.GET("/accounts/:id/balance", handler.HandleGetAccBalance)
+	// Account Handlers
+	r.GET("/users/:username/accounts/:alias", handlerAccount.HandleGetAccByAliasOwner)
+	r.GET("/users/:username/accounts/:alias/balance", handlerAccount.HandleGetAccBalance)
+	r.PUT("/users/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
 
 }

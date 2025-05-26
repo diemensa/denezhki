@@ -30,8 +30,7 @@ func main() {
 	r := gin.Default()
 
 	handler.SetupTransferRouters(r, transferService)
-	handler.SetupUserRouters(r, userService)
-	handler.SetupAccountRouters(r, accountService)
+	handler.SetupUserAccRouters(r, userService, accountService)
 
 	r.Run(":" + cfg.Port)
 }

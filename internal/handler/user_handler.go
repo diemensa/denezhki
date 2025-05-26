@@ -49,6 +49,7 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
 	}
 
 	err := h.service.CreateUser(c, newUser.Username, newUser.Password)
@@ -64,21 +65,25 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 }
 
 func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
-	var newAcc dto.CreateAccountRequest
+	username := c.Param("username")
 
-	err := c.ShouldBindJSON(&newAcc)
+	var req dto.CreateAccountRequest
+
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "something's wrong with the alias",
+		})
 		return
 	}
 
-	user, err := h.service.GetUserByUsername(c, newAcc.Username)
+	user, err := h.service.GetUserByUsername(c, username)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user does not exist"})
 		return
 	}
 
-	err = h.service.CreateAccount(c, user.ID)
+	err = h.service.CreateAccount(c, user.ID, username, req.Alias)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

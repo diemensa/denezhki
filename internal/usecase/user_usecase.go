@@ -41,9 +41,9 @@ func (u *UserService) CreateUser(c context.Context, username, password string) e
 
 }
 
-func (u *UserService) CreateAccount(c context.Context, userID uuid.UUID) error {
+func (u *UserService) CreateAccount(c context.Context, userID uuid.UUID, username, alias string) error {
 
-	return u.userRepo.CreateAccount(c, userID)
+	return u.userRepo.CreateAccount(c, userID, username, alias)
 
 }
 

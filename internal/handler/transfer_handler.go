@@ -26,6 +26,11 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 		return
 	}
 
+	if req.FromID == req.ToID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "you can't transfer money to the same account"})
+		return
+	}
+
 	err = h.service.PerformTransfer(c, transferID, req.FromID, req.ToID, req.Amount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
@@ -57,16 +62,11 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	c.JSON(http.StatusOK, transfer)
 }
 
-func (h *TransferHandler) HandleGetAllTransfers(c *gin.Context) {
-	idParam := c.Param("id")
-	accountID, err := uuid.Parse(idParam)
+func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid UUID"})
-		return
-	}
+	alias, owner := extractAliasOwner(c)
 
-	transfers, err := h.service.GetAllAccountTransfers(c, accountID)
+	transfers, err := h.service.GetAllAccountTransfers(c, alias, owner)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

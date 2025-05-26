@@ -66,8 +66,8 @@ func (repo *UserPostgresRepo) CreateUser(c context.Context, username, password s
 
 }
 
-func (repo *UserPostgresRepo) CreateAccount(c context.Context, userID uuid.UUID) error {
-	account := model.NewAccount(userID)
+func (repo *UserPostgresRepo) CreateAccount(c context.Context, userID uuid.UUID, username, alias string) error {
+	account := model.NewAccount(userID, username, alias)
 	err := repo.db.WithContext(c).Create(&account).Error
 
 	if err != nil {
@@ -87,5 +87,5 @@ func (repo *UserPostgresRepo) ValidatePassword(c context.Context, username, pass
 		return err
 	}
 
-	return bcrypt.CompareHashAndPassword([]byte(password), []byte(user.Password))
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
