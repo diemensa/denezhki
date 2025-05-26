@@ -2,19 +2,19 @@
 
 denezhki - это простой сервис для управления банковскими счетами
 
-# В проекте реализовано
+## В проекте реализовано
 - Создание пользователя
 - Создание счёта (account)
 - Получение/обновление баланса
 - Кеширование баланса через Redis
 - Выполнение переводов между счетами
 
----
-# TODO
+## TODO
 
 - Тесты
 - JWT-аутентификация
 
+---
 ## Технологии
 
 - Go 1.24.2
@@ -22,7 +22,6 @@ denezhki - это простой сервис для управления бан
 - PostgreSQL
 - GORM
 - Docker
-- Docker Compose
 - Redis
 ---
 
@@ -32,8 +31,8 @@ denezhki - это простой сервис для управления бан
 ### Инструкция
 1. Клонировать репозиторий:
    ```bash
-   git clone https://github.com/diemensa/fastapi_project
-   cd fastapi_project
+   git clone https://github.com/diemensa/denezhki
+   cd denezhki
 2. Собрать и запустить проект через docker-compose:
    ```bash
    docker-compose up --build
