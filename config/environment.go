@@ -1,8 +1,6 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
@@ -17,18 +15,9 @@ type Config struct {
 
 	RedisHost string
 	RedisPort string
-
-	RabbitHost     string
-	RabbitPort     string
-	RabbitUser     string
-	RabbitPassword string
-	RabbitVHost    string
 }
 
 func LoadEnv() *Config {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(".env not found")
-	}
 
 	return &Config{
 		Port: os.Getenv("PORT"),
@@ -41,11 +30,5 @@ func LoadEnv() *Config {
 
 		RedisHost: os.Getenv("REDIS_HOST"),
 		RedisPort: os.Getenv("REDIS_PORT"),
-
-		RabbitHost:     os.Getenv("RABBIT_HOST"),
-		RabbitPort:     os.Getenv("RABBIT_PORT"),
-		RabbitUser:     os.Getenv("RABBIT_USER"),
-		RabbitPassword: os.Getenv("RABBIT_PASSWORD"),
-		RabbitVHost:    os.Getenv("RABBIT_VHOST"),
 	}
 }
