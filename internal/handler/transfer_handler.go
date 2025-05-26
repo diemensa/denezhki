@@ -18,11 +18,10 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
-	transferID := uuid.New()
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
+		c.JSON(http.StatusBadRequest, gin.H{"invalid request": "amount must be >= 1 or ID's aren't of UUID type"})
 		return
 	}
 
@@ -31,6 +30,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 		return
 	}
 
+	transferID := uuid.New()
 	err = h.service.PerformTransfer(c, transferID, req.FromID, req.ToID, req.Amount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
