@@ -23,6 +23,7 @@ denezhki - это простой сервис для управления бан
 - GORM
 - Docker
 - Redis
+- SwaggerUI
 ---
 
 ## Запуск
@@ -36,3 +37,7 @@ denezhki - это простой сервис для управления бан
 2. Собрать и запустить проект через docker-compose:
    ```bash
    docker-compose up --build
+
+### Документация API
+После запуска можно открыть документацию:
+- SwaggerUI: http://localhost:8080/docs

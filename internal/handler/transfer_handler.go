@@ -16,6 +16,13 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 	return &TransferHandler{service: s}
 }
 
+// HandleTransfer
+// @Summary Perform a transfer between accounts
+// @Tags Transfer
+// @Param transfer body dto.TransferRequest true "Transfer details"
+// @Success 200 {object} dto.TransferResponse
+// @Failure 400 {object} map[string]string
+// @Router /transfers [post]
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
 
@@ -33,6 +40,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	transferID := uuid.New()
 	err = h.service.PerformTransfer(c, transferID, req.FromID, req.ToID, req.Amount)
 	if err != nil {
+		h.service.LogTransaction(c, transferID, req.FromID, req.ToID, req.Amount, false)
 		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
 		return
 	}
@@ -41,6 +49,13 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 
 }
 
+// HandleGetTransferByID
+// @Summary Get transfer details by ID
+// @Tags Transfer
+// @Param id path string true "Transfer UUID"
+// @Success 200 {object} dto.TransferResponse
+// @Failure 400 {object} map[string]string
+// @Router /transfers/{id} [get]
 func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	idParam := c.Param("id")
 	transferID, err := uuid.Parse(idParam)
@@ -62,6 +77,14 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	c.JSON(http.StatusOK, transfer)
 }
 
+// HandleGetAllAccTransfers
+// @Summary Get all transfers for an account
+// @Tags Transfer
+// @Param username path string true "Username"
+// @Param alias path string true "Account Alias"
+// @Success 200 {array} dto.TransferResponse
+// @Failure 400 {object} map[string]string
+// @Router /users/{username}/accounts/{alias}/transfers [get]
 func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
 	alias, owner := extractAliasOwner(c)

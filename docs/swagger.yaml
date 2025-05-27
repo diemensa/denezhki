@@ -1,0 +1,319 @@
+definitions:
+  dto.AccountResponse:
+    properties:
+      alias:
+        type: string
+      balance:
+        type: number
+      id:
+        type: string
+      owner:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.BalanceRequest:
+    properties:
+      balance:
+        type: number
+    type: object
+  dto.BalanceResponse:
+    properties:
+      balance:
+        type: number
+    type: object
+  dto.CreateAccountRequest:
+    properties:
+      alias:
+        type: string
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.TransferRequest:
+    properties:
+      amount:
+        minimum: 1
+        type: number
+      from_id:
+        type: string
+      to_id:
+        type: string
+    required:
+    - amount
+    - from_id
+    - to_id
+    type: object
+  dto.TransferResponse:
+    properties:
+      message:
+        type: string
+      transfer_id:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Banking-like API for managing users and transfers
+  title: Denezhki API
+  version: "1.0"
+paths:
+  /transfers:
+    post:
+      parameters:
+      - description: Transfer details
+        in: body
+        name: transfer
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransferRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransferResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Perform a transfer between accounts
+      tags:
+      - Transfer
+  /transfers/{id}:
+    get:
+      parameters:
+      - description: Transfer UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransferResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transfer details by ID
+      tags:
+      - Transfer
+  /users:
+    post:
+      parameters:
+      - description: New user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new user
+      tags:
+      - User
+  /users/{username}/accounts:
+    get:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AccountResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all accounts of a user
+      tags:
+      - User
+    post:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: New account data
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAccountRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new account for a user
+      tags:
+      - User
+  /users/{username}/accounts/{alias}:
+    get:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Account Alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get account by alias and owner username
+      tags:
+      - Account
+  /users/{username}/accounts/{alias}/balance:
+    get:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Account Alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BalanceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get account balance
+      tags:
+      - Account
+    put:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Account Alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      - description: Balance update payload
+        in: body
+        name: balance
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BalanceRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update account balance
+      tags:
+      - Account
+  /users/{username}/accounts/{alias}/transfers:
+    get:
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Account Alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TransferResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all transfers for an account
+      tags:
+      - Transfer
+swagger: "2.0"

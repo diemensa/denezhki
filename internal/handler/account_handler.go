@@ -40,6 +40,14 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 	c.JSON(http.StatusOK, acc)
 }
 
+// HandleGetAccBalance
+// @Summary Get account balance
+// @Tags Account
+// @Param username path string true "Username"
+// @Param alias path string true "Account Alias"
+// @Success 200 {object} dto.BalanceResponse
+// @Failure 400 {object} map[string]string
+// @Router /users/{username}/accounts/{alias}/balance [get]
 func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
 	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
@@ -54,6 +62,14 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.BalanceResponse{Balance: account.Balance})
 }
 
+// HandleGetAccByAliasOwner
+// @Summary Get account by alias and owner username
+// @Tags Account
+// @Param username path string true "Username"
+// @Param alias path string true "Account Alias"
+// @Success 200 {object} dto.AccountResponse
+// @Failure 400 {object} map[string]string
+// @Router /users/{username}/accounts/{alias} [get]
 func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
 
@@ -65,9 +81,20 @@ func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 		})
 	}
 
-	c.JSON(http.StatusOK, account)
+	response := dto.NewAccountResponse(account)
+
+	c.JSON(http.StatusOK, response)
 }
 
+// HandleUpdateBalance
+// @Summary Update account balance
+// @Tags Account
+// @Param username path string true "Username"
+// @Param alias path string true "Account Alias"
+// @Param balance body dto.BalanceRequest true "Balance update payload"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /users/{username}/accounts/{alias}/balance [put]
 func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
 	var req dto.BalanceRequest

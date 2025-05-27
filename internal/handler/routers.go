@@ -32,3 +32,13 @@ func SetupUserAccRouters(r *gin.Engine, userServ *usecase.UserService, accountSe
 	r.PUT("/users/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
 
 }
+
+// Router init for someday-i'll-add-this AuthService
+//func SetupAuthRouters(r *gin.Engine, authServ *usecase.AuthService) {
+//
+//	handler := NewAuthHandler(authServ)
+//
+//	r.POST("/auth/login", handler.HandleLogin)
+//	r.POST("/auth/me", handler.HandleGetMe)
+//  r.POST("/auth/refresh", handler.HandleRefresh)
+//}

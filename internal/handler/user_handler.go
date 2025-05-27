@@ -15,6 +15,13 @@ func NewUserHandler(s *usecase.UserService) *UserHandler {
 	return &UserHandler{service: s}
 }
 
+// HandleGetUserAccounts
+// @Summary Get all accounts of a user
+// @Tags User
+// @Param username path string true "Username"
+// @Success 200 {array} dto.AccountResponse
+// @Failure 400 {object} map[string]string
+// @Router /users/{username}/accounts [get]
 func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 	username := c.Param("username")
 	user, err := h.service.GetUserByUsername(c, username)
@@ -33,17 +40,20 @@ func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 			"error": err.Error(),
 		})
 		return
-	} else if len(accounts) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "user has no accounts",
-		})
-		return
 	}
 
 	c.JSON(http.StatusOK, accounts)
 
 }
 
+// HandleCreateUser
+// @Summary Create a new user
+// @Tags User
+// @Param user body dto.CreateUserRequest true "New user data"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users [post]
 func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 	var newUser dto.CreateUserRequest
 
@@ -64,6 +74,15 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 
 }
 
+// HandleCreateAccount
+// @Summary Create a new account for a user
+// @Tags User
+// @Param username path string true "Username"
+// @Param account body dto.CreateAccountRequest true "New account data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /users/{username}/accounts [post]
 func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 	username := c.Param("username")
 
@@ -91,7 +110,3 @@ func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "account created"})
 }
-
-//func (h *UserHandler) HandleValidatePassword(c *gin.Context) {
-//
-//}

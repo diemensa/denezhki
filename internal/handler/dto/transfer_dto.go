@@ -9,8 +9,8 @@ type TransferRequest struct {
 }
 
 type TransferResponse struct {
-	TransactionID uuid.UUID `json:"transaction_id"`
-	Message       string    `json:"message"`
+	TransferID uuid.UUID `json:"transfer_id"`
+	Message    string    `json:"message"`
 }
 
 func NewTransferResponse(id uuid.UUID, success bool) *TransferResponse {
@@ -21,7 +21,7 @@ func NewTransferResponse(id uuid.UUID, success bool) *TransferResponse {
 	}
 
 	return &TransferResponse{
-		TransactionID: id,
-		Message:       msg,
+		TransferID: id,
+		Message:    msg,
 	}
 }

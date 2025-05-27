@@ -2,15 +2,22 @@ package main
 
 import (
 	"github.com/diemensa/denezhki/config"
+	_ "github.com/diemensa/denezhki/docs"
 	"github.com/diemensa/denezhki/internal/handler"
 	"github.com/diemensa/denezhki/internal/repository/postgres"
 	"github.com/diemensa/denezhki/internal/usecase"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"log"
 	"time"
 )
 
+// @title Denezhki API
+// @version 1.0
+// @description Banking-like API for managing users and transfers
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	cfg := config.LoadEnv()
 	db, err := config.InitPostgres(cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBPort)
 	rdb := config.NewRedisClient(cfg.RedisHost + ":" + cfg.RedisPort)
@@ -32,5 +39,9 @@ func main() {
 	handler.SetupTransferRouters(r, transferService)
 	handler.SetupUserAccRouters(r, userService, accountService)
 
-	r.Run(":" + cfg.Port)
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	if err = r.Run(":" + cfg.Port); err != nil {
+		log.Fatalf("Failed to run server: %v", err)
+	}
 }
