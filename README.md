@@ -8,10 +8,10 @@ denezhki - это простой сервис для управления бан
 - Получение/обновление баланса
 - Кеширование баланса через Redis
 - Выполнение переводов между счетами
+- Юнит-тестирование
 
 ## TODO
 
-- Тесты
 - JWT-аутентификация
 
 ---
@@ -24,6 +24,7 @@ denezhki - это простой сервис для управления бан
 - Docker
 - Redis
 - SwaggerUI
+- Тестирование (testify + mockery)
 ---
 
 ## Запуск
@@ -34,7 +35,10 @@ denezhki - это простой сервис для управления бан
    ```bash
    git clone https://github.com/diemensa/denezhki
    cd denezhki
-2. Собрать и запустить проект через docker-compose:
+2. Запустить тесты (пока что тестами покрыт только user_usecase):
+   ```bash
+   go test ./...
+3. Собрать и запустить проект через docker-compose:
    ```bash
    docker-compose up --build
 
