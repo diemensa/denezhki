@@ -35,7 +35,7 @@ denezhki - это простой сервис для управления бан
    ```bash
    git clone https://github.com/diemensa/denezhki
    cd denezhki
-2. Запустить тесты (пока что тестами покрыт только user_usecase):
+2. Запустить тесты (пока что тестами покрыты только usecase):
    ```bash
    go test ./...
 3. Собрать и запустить проект через docker-compose:

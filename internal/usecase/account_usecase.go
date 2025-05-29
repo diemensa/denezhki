@@ -6,21 +6,20 @@ import (
 	"github.com/diemensa/denezhki/internal/repository"
 	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
-	"github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
 )
 
 type AccountService struct {
 	accountRepo repository.AccountRepo
-	redisClient *redis.Client
+	cacheClient repository.CacheRepo
 	cacheTTL    time.Duration
 }
 
-func NewAccountService(a repository.AccountRepo, redisClient *redis.Client, ttl time.Duration) *AccountService {
+func NewAccountService(a repository.AccountRepo, cacheClient repository.CacheRepo, ttl time.Duration) *AccountService {
 	return &AccountService{
 		accountRepo: a,
-		redisClient: redisClient,
+		cacheClient: cacheClient,
 		cacheTTL:    ttl,
 	}
 }
@@ -40,7 +39,7 @@ func (s *AccountService) GetAccBalanceByID(c context.Context, id uuid.UUID) (flo
 	var balance float64
 
 	key := "balance" + id.String()
-	cache, err := s.redisClient.Get(c, key).Result()
+	cache, err := s.cacheClient.Get(c, key)
 	if err == nil {
 		balance, err = strconv.ParseFloat(cache, 64)
 		if err == nil {
@@ -52,7 +51,7 @@ func (s *AccountService) GetAccBalanceByID(c context.Context, id uuid.UUID) (flo
 	if err != nil {
 		return 0, fmt.Errorf("cache error: %w", err)
 	}
-	err = s.redisClient.Set(c, key, fmt.Sprintf("%f", balance), s.cacheTTL).Err()
+	err = s.cacheClient.Set(c, key, fmt.Sprintf("%f", balance), s.cacheTTL)
 	return balance, nil
 }
 
@@ -70,7 +69,7 @@ func (s *AccountService) UpdateAccBalance(c context.Context, id uuid.UUID, newBa
 	}
 
 	key := "balance" + id.String()
-	err = s.redisClient.Set(c, key, fmt.Sprintf("%f", newBal), s.cacheTTL).Err()
+	err = s.cacheClient.Set(c, key, fmt.Sprintf("%f", newBal), s.cacheTTL)
 
 	if err != nil {
 		fmt.Printf("warning: failed to update balance cache for %s: %v\n", id, err)

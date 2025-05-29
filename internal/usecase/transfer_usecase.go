@@ -6,22 +6,24 @@ import (
 	"github.com/diemensa/denezhki/internal/repository"
 	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
-	"github.com/redis/go-redis/v9"
 	"time"
 )
 
 type TransferService struct {
 	accountRepo     repository.AccountRepo
 	transactionRepo repository.TransRepo
-	redisClient     *redis.Client
+	cacheRepo       repository.CacheRepo
 	cacheTTL        time.Duration
 }
 
-func NewTransferService(a repository.AccountRepo, t repository.TransRepo, redis *redis.Client, ttl time.Duration) *TransferService {
+func NewTransferService(a repository.AccountRepo,
+	t repository.TransRepo,
+	cache repository.CacheRepo,
+	ttl time.Duration) *TransferService {
 	return &TransferService{
 		accountRepo:     a,
 		transactionRepo: t,
-		redisClient:     redis,
+		cacheRepo:       cache,
 		cacheTTL:        ttl,
 	}
 }
@@ -56,7 +58,7 @@ func (s *TransferService) PerformTransfer(c context.Context,
 		return fmt.Errorf("couldn't send money: %w", err)
 	}
 
-	updateBalanceCache(c, s.redisClient, fromID, toID, fromAccount.Balance, toAccount.Balance, s.cacheTTL)
+	updateBalanceCache(c, s.cacheRepo, fromID, toID, fromAccount.Balance, toAccount.Balance, s.cacheTTL)
 
 	return nil
 }
@@ -87,7 +89,7 @@ func (s *TransferService) LogTransaction(c context.Context,
 	s.transactionRepo.LogTransaction(c, transactionID, fromID, toID, amount, success)
 }
 
-func updateBalanceCache(c context.Context, rdb *redis.Client,
+func updateBalanceCache(c context.Context, cacheRepo repository.CacheRepo,
 	fromID, toID uuid.UUID,
 	fromBal, toBal float64,
 	ttl time.Duration) {
@@ -95,6 +97,6 @@ func updateBalanceCache(c context.Context, rdb *redis.Client,
 	fromKey := fmt.Sprintf("balance:%s", fromID.String())
 	toKey := fmt.Sprintf("balance:%s", toID.String())
 
-	_ = rdb.Set(c, fromKey, fromBal, ttl)
-	_ = rdb.Set(c, toKey, toBal, ttl)
+	_ = cacheRepo.Set(c, fromKey, fromBal, ttl)
+	_ = cacheRepo.Set(c, toKey, toBal, ttl)
 }

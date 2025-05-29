@@ -5,11 +5,13 @@ import (
 	_ "github.com/diemensa/denezhki/docs"
 	"github.com/diemensa/denezhki/internal/handler"
 	"github.com/diemensa/denezhki/internal/repository/postgres"
+	redislocal "github.com/diemensa/denezhki/internal/repository/redis"
 	"github.com/diemensa/denezhki/internal/usecase"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"log"
+	"net/http"
 	"time"
 )
 
@@ -29,15 +31,20 @@ func main() {
 	transRepo := postgres.NewTransPostgresRepo(db)
 	accRepo := postgres.NewAccPostgresRepo(db)
 	userRepo := postgres.NewUserPostgresRepo(db)
+	cacheRepo := redislocal.NewCacheRedisRepo(rdb)
 
-	transferService := usecase.NewTransferService(accRepo, transRepo, rdb, 10*time.Minute)
-	accountService := usecase.NewAccountService(accRepo, rdb, 10*time.Minute)
+	transferService := usecase.NewTransferService(accRepo, transRepo, cacheRepo, 10*time.Minute)
+	accountService := usecase.NewAccountService(accRepo, cacheRepo, 10*time.Minute)
 	userService := usecase.NewUserService(userRepo)
 
 	r := gin.Default()
 
 	handler.SetupTransferRouters(r, transferService)
 	handler.SetupUserAccRouters(r, userService, accountService)
+
+	r.GET("/docs", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
+	})
 
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
