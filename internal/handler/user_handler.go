@@ -20,25 +20,21 @@ func NewUserHandler(s *usecase.UserService) *UserHandler {
 // @Tags User
 // @Param username path string true "Username"
 // @Success 200 {array} dto.AccountResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts [get]
 func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 	username := c.Param("username")
 	user, err := h.service.GetUserByUsername(c, username)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	accounts, err := h.service.GetUserAccounts(c, user.ID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -50,27 +46,25 @@ func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 // @Summary Create a new user
 // @Tags User
 // @Param user body dto.CreateUserRequest true "New user data"
-// @Success 201 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 201 {object} dto.MessageResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /users [post]
 func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 	var newUser dto.CreateUserRequest
 
 	if err := c.ShouldBindJSON(&newUser); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		RespondWithError(c, http.StatusBadRequest, "invalid request")
 		return
 	}
 
 	err := h.service.CreateUser(c, newUser.Username, newUser.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "user created"})
+	RespondWithMessage(c, http.StatusCreated, "user created")
 
 }
 
@@ -79,9 +73,9 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 // @Tags User
 // @Param username path string true "Username"
 // @Param account body dto.CreateAccountRequest true "New account data"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} dto.MessageResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts [post]
 func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 	username := c.Param("username")
@@ -90,23 +84,21 @@ func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "something's wrong with the alias",
-		})
+		RespondWithError(c, http.StatusBadRequest, "something's wrong with the alias")
 		return
 	}
 
 	user, err := h.service.GetUserByUsername(c, username)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user does not exist"})
+		RespondWithError(c, http.StatusBadRequest, "user does not exist")
 		return
 	}
 
 	err = h.service.CreateAccount(c, user.ID, username, req.Alias)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		RespondWithError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "account created"})
+	RespondWithMessage(c, http.StatusOK, "account created")
 }

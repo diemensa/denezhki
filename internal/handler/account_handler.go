@@ -22,18 +22,14 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 	accountID, err := uuid.Parse(idParam)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid UUID",
-		})
+		RespondWithError(c, http.StatusBadRequest, "invalid UUID")
 		return
 	}
 
 	acc, err := h.service.GetAccByID(c, accountID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -46,16 +42,14 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 // @Param username path string true "Username"
 // @Param alias path string true "Account Alias"
 // @Success 200 {object} dto.BalanceResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts/{alias}/balance [get]
 func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
 	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -68,7 +62,7 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 // @Param username path string true "Username"
 // @Param alias path string true "Account Alias"
 // @Success 200 {object} dto.AccountResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts/{alias} [get]
 func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
@@ -76,9 +70,8 @@ func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	response := dto.NewAccountResponse(account)
@@ -92,8 +85,8 @@ func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 // @Param username path string true "Username"
 // @Param alias path string true "Account Alias"
 // @Param balance body dto.BalanceRequest true "Balance update payload"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
+// @Success 200 {object} dto.MessageResponse
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts/{alias}/balance [put]
 func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
@@ -102,25 +95,23 @@ func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
 	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err = c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		RespondWithError(c, http.StatusBadRequest, "invalid request")
 		return
 	}
 
 	err = h.service.UpdateAccBalance(c, account.ID, req.Balance)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "couldn't update balance"})
+		RespondWithError(c, http.StatusBadRequest, "couldn't update balance")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "balance updated"})
+	RespondWithMessage(c, http.StatusOK, "balance updated")
 }
 
 func extractAliasOwner(c *gin.Context) (alias, owner string) {

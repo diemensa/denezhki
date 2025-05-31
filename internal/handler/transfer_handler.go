@@ -21,19 +21,19 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 // @Tags Transfer
 // @Param transfer body dto.TransferRequest true "Transfer details"
 // @Success 200 {object} dto.TransferResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /transfers [post]
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"invalid request": "amount must be >= 1 or ID's aren't of UUID type"})
+		RespondWithError(c, http.StatusBadRequest, "amount must be >= 1 or ID's aren't of UUID type")
 		return
 	}
 
 	if req.FromID == req.ToID {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "you can't transfer money to the same account"})
+		RespondWithError(c, http.StatusBadRequest, "you can't transfer money to the same account")
 		return
 	}
 
@@ -42,7 +42,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	if err != nil {
 		err = h.service.LogTransaction(c, transferID, req.FromID, req.ToID, req.Amount, false)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "couldn't log failed transaction"})
+			RespondWithError(c, http.StatusBadRequest, "couldn't log failed transaction")
 		}
 		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
 		return
@@ -57,23 +57,21 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 // @Tags Transfer
 // @Param id path string true "Transfer UUID"
 // @Success 200 {object} dto.TransferResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /transfers/{id} [get]
 func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	idParam := c.Param("id")
 	transferID, err := uuid.Parse(idParam)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid UUID"})
+		RespondWithError(c, http.StatusBadRequest, "invalid UUID")
 		return
 	}
 
 	transfer, err := h.service.GetTransferByID(c, transferID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -86,7 +84,7 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 // @Param username path string true "Username"
 // @Param alias path string true "Account Alias"
 // @Success 200 {array} dto.TransferResponse
-// @Failure 400 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{username}/accounts/{alias}/transfers [get]
 func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
@@ -94,9 +92,7 @@ func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
 	transfers, err := h.service.GetAllAccountTransfers(c, alias, owner)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

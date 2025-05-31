@@ -3,6 +3,9 @@ package handler
 import (
 	"github.com/diemensa/denezhki/internal/usecase"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 )
 
 func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
@@ -32,6 +35,14 @@ func SetupUserAccRouters(r *gin.Engine, userServ *usecase.UserService, accountSe
 	r.GET("/users/:username/accounts/:alias/balance", handlerAccount.HandleGetAccBalance)
 	r.PUT("/users/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
 
+}
+
+func SetupDocsRouters(r *gin.Engine) {
+	r.GET("/docs", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
+	})
+
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 // Router init for someday-i'll-add-this AuthService

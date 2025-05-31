@@ -8,10 +8,7 @@ import (
 	redislocal "github.com/diemensa/denezhki/internal/repository/redis"
 	"github.com/diemensa/denezhki/internal/usecase"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
 	"log"
-	"net/http"
 	"time"
 )
 
@@ -41,12 +38,7 @@ func main() {
 
 	handler.SetupTransferRouters(r, transferService)
 	handler.SetupUserAccRouters(r, userService, accountService)
-
-	r.GET("/docs", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
-	})
-
-	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	handler.SetupDocsRouters(r)
 
 	if err = r.Run(":" + cfg.Port); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
