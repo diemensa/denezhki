@@ -85,8 +85,8 @@ func (s *TransferService) GetAllAccountTransfers(
 func (s *TransferService) LogTransaction(c context.Context,
 	transactionID, fromID, toID uuid.UUID,
 	amount float64,
-	success bool) {
-	s.transactionRepo.LogTransaction(c, transactionID, fromID, toID, amount, success)
+	success bool) error {
+	return s.transactionRepo.LogTransaction(c, transactionID, fromID, toID, amount, success)
 }
 
 func updateBalanceCache(c context.Context, cacheRepo repository.CacheRepo,

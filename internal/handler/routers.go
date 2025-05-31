@@ -12,6 +12,7 @@ func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
 	r.POST("/transfers", handler.HandleTransfer)
 	r.GET("/transfers/:id", handler.HandleGetTransferByID)
 	r.GET("/users/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
+	// r.POST("/users/:username/accounts/:alias/transfers", handler.HandleTransfer) с авторизацией
 
 }
 

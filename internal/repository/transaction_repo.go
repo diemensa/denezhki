@@ -15,7 +15,7 @@ type TransRepo interface {
 	LogTransaction(c context.Context,
 		transactionID, fromID, toID uuid.UUID,
 		amount float64,
-		success bool)
+		success bool) error
 
 	GetTransferByID(c context.Context, transactionID uuid.UUID) (*model.Transaction, error)
 	GetAllAccountTransfers(c context.Context, accountID uuid.UUID) ([]model.Transaction, error)

@@ -40,7 +40,10 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	transferID := uuid.New()
 	err = h.service.PerformTransfer(c, transferID, req.FromID, req.ToID, req.Amount)
 	if err != nil {
-		h.service.LogTransaction(c, transferID, req.FromID, req.ToID, req.Amount, false)
+		err = h.service.LogTransaction(c, transferID, req.FromID, req.ToID, req.Amount, false)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "couldn't log failed transaction"})
+		}
 		c.JSON(http.StatusBadRequest, dto.NewTransferResponse(transferID, false))
 		return
 	}

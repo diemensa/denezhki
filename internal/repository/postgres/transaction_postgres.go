@@ -24,18 +24,18 @@ func (repo *TransPostgresRepo) PerformTransfer(c context.Context,
 		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", fromID).
 			Update("balance", fromNewBalance).Error; err != nil {
-			repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
+			_ = repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
 			return err
 		}
 
 		if err := tx.WithContext(c).Model(&model.Account{}).
 			Where("id = ?", toID).
 			Update("balance", toNewBalance).Error; err != nil {
-			repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
+			_ = repo.LogTransaction(c, transactionID, fromID, toID, amount, false)
 			return err
 		}
 
-		repo.LogTransaction(c, transactionID, fromID, toID, amount, true)
+		_ = repo.LogTransaction(c, transactionID, fromID, toID, amount, true)
 		return nil
 	})
 
@@ -44,11 +44,11 @@ func (repo *TransPostgresRepo) PerformTransfer(c context.Context,
 func (repo *TransPostgresRepo) LogTransaction(c context.Context,
 	transactionID, fromID, toID uuid.UUID,
 	amount float64,
-	success bool) {
+	success bool) error {
 
 	transaction := model.NewTransaction(transactionID, fromID, toID, amount, success)
 
-	repo.db.WithContext(c).Create(&transaction)
+	return repo.db.WithContext(c).Create(&transaction).Error
 }
 
 func (repo *TransPostgresRepo) GetTransferByID(c context.Context,
