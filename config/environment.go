@@ -15,6 +15,8 @@ type Config struct {
 
 	RedisHost string
 	RedisPort string
+
+	SecretJWT string
 }
 
 func LoadEnv() *Config {
@@ -30,5 +32,7 @@ func LoadEnv() *Config {
 
 		RedisHost: os.Getenv("REDIS_HOST"),
 		RedisPort: os.Getenv("REDIS_PORT"),
+
+		SecretJWT: os.Getenv("SECRET_JWT"),
 	}
 }

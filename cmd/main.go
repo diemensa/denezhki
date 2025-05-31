@@ -4,6 +4,7 @@ import (
 	"github.com/diemensa/denezhki/config"
 	_ "github.com/diemensa/denezhki/docs"
 	"github.com/diemensa/denezhki/internal/handler"
+	"github.com/diemensa/denezhki/internal/middleware"
 	"github.com/diemensa/denezhki/internal/repository/postgres"
 	redislocal "github.com/diemensa/denezhki/internal/repository/redis"
 	"github.com/diemensa/denezhki/internal/usecase"
@@ -33,11 +34,18 @@ func main() {
 	accountService := usecase.NewAccountService(accRepo, cacheRepo, 10*time.Minute)
 	transferService := usecase.NewTransferService(accountService, transRepo, cacheRepo, 10*time.Minute)
 	userService := usecase.NewUserService(userRepo)
+	authService := usecase.NewAuthService(userService, cfg.SecretJWT)
+
+	authMiddleware := middleware.JWTMiddleware(authService)
 
 	r := gin.Default()
 
-	handler.SetupTransferRouters(r, transferService)
-	handler.SetupUserAccRouters(r, userService, accountService)
+	authorized := r.Group("/users/")
+	authorized.Use(authMiddleware)
+
+	handler.SetupTransferRouters(authorized, transferService)
+	handler.SetupUserAccRouters(authorized, userService, accountService)
+	handler.SetupAuthRouters(r, authService, userService)
 	handler.SetupDocsRouters(r)
 
 	if err = r.Run(":" + cfg.Port); err != nil {

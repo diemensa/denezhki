@@ -8,32 +8,39 @@ import (
 	"net/http"
 )
 
-func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
+func SetupTransferRouters(rg *gin.RouterGroup, s *usecase.TransferService) {
 
 	handler := NewTransferHandler(s)
 
-	r.GET("/transfers/:id", handler.HandleGetTransferByID)
-	r.GET("/users/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
-	r.POST("/users/:username/accounts/:alias/transfers", handler.HandleTransfer)
+	// rg.GET("/transfers/:id", handler.HandleGetTransferByID)
+	rg.GET("/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
+	rg.POST("/:username/accounts/:alias/transfers", handler.HandleTransfer)
 
 }
 
-func SetupUserAccRouters(r *gin.Engine, userServ *usecase.UserService, accountServ *usecase.AccountService) {
+func SetupUserAccRouters(rg *gin.RouterGroup,
+	userServ *usecase.UserService, accountServ *usecase.AccountService) {
 
 	handlerUser := NewUserHandler(userServ)
 	handlerAccount := NewAccountHandler(accountServ)
 
 	// User Handlers
-	r.POST("/users", handlerUser.HandleCreateUser)
-	r.GET("/users/:username/accounts", handlerUser.HandleGetUserAccounts)
-	r.POST("/users/:username/accounts/", handlerUser.HandleCreateAccount)
-	// r.POST("/auth/login", handler.HandleValidatePassword) ручка для авторизации, сделать позже
+	rg.GET("/:username/accounts", handlerUser.HandleGetUserAccounts)
+	rg.POST("/:username/accounts/", handlerUser.HandleCreateAccount)
 
 	// Account Handlers
-	r.GET("/users/:username/accounts/:alias", handlerAccount.HandleGetAccByAliasOwner)
-	r.GET("/users/:username/accounts/:alias/balance", handlerAccount.HandleGetAccBalance)
-	r.PUT("/users/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
+	rg.GET("/:username/accounts/:alias", handlerAccount.HandleGetAccByAliasOwner)
+	rg.GET("/:username/accounts/:alias/balance", handlerAccount.HandleGetAccBalance)
+	rg.PUT("/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
 
+}
+
+func SetupAuthRouters(r *gin.Engine, s *usecase.AuthService, us *usecase.UserService) {
+	handlerAuth := NewAuthHandler(s)
+	handlerUser := NewUserHandler(us)
+
+	r.POST("/auth/login", handlerAuth.HandleLogin)
+	r.POST("/users", handlerUser.HandleCreateUser)
 }
 
 func SetupDocsRouters(r *gin.Engine) {
@@ -43,13 +50,3 @@ func SetupDocsRouters(r *gin.Engine) {
 
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
-
-// Router init for someday-i'll-add-this AuthService
-//func SetupAuthRouters(r *gin.Engine, authServ *usecase.AuthService) {
-//
-//	handler := NewAuthHandler(authServ)
-//
-//	r.POST("/auth/login", handler.HandleLogin)
-//	r.POST("/auth/me", handler.HandleGetMe)
-//  r.POST("/auth/refresh", handler.HandleRefresh)
-//}
