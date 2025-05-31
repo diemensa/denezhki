@@ -30,8 +30,8 @@ func main() {
 	userRepo := postgres.NewUserPostgresRepo(db)
 	cacheRepo := redislocal.NewCacheRedisRepo(rdb)
 
-	transferService := usecase.NewTransferService(accRepo, transRepo, cacheRepo, 10*time.Minute)
 	accountService := usecase.NewAccountService(accRepo, cacheRepo, 10*time.Minute)
+	transferService := usecase.NewTransferService(accountService, transRepo, cacheRepo, 10*time.Minute)
 	userService := usecase.NewUserService(userRepo)
 
 	r := gin.Default()

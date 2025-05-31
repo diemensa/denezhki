@@ -89,6 +89,10 @@ func (s *TransferService) LogTransaction(c context.Context,
 	return s.transactionRepo.LogTransaction(c, transactionID, fromID, toID, amount, success)
 }
 
+func (s *TransferService) GetAccByAliasOwner(c context.Context, alias, owner string) (*model.Account, error) {
+	return s.accountRepo.GetAccByAliasOwner(c, alias, owner)
+}
+
 func updateBalanceCache(c context.Context, cacheRepo repository.CacheRepo,
 	fromID, toID uuid.UUID,
 	fromBal, toBal float64,

@@ -12,10 +12,9 @@ func SetupTransferRouters(r *gin.Engine, s *usecase.TransferService) {
 
 	handler := NewTransferHandler(s)
 
-	r.POST("/transfers", handler.HandleTransfer)
 	r.GET("/transfers/:id", handler.HandleGetTransferByID)
 	r.GET("/users/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
-	// r.POST("/users/:username/accounts/:alias/transfers", handler.HandleTransfer) с авторизацией
+	r.POST("/users/:username/accounts/:alias/transfers", handler.HandleTransfer)
 
 }
 
@@ -25,8 +24,8 @@ func SetupUserAccRouters(r *gin.Engine, userServ *usecase.UserService, accountSe
 	handlerAccount := NewAccountHandler(accountServ)
 
 	// User Handlers
-	r.GET("/users/:username/accounts", handlerUser.HandleGetUserAccounts)
 	r.POST("/users", handlerUser.HandleCreateUser)
+	r.GET("/users/:username/accounts", handlerUser.HandleGetUserAccounts)
 	r.POST("/users/:username/accounts/", handlerUser.HandleCreateAccount)
 	// r.POST("/auth/login", handler.HandleValidatePassword) ручка для авторизации, сделать позже
 

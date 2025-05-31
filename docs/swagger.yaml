@@ -52,13 +52,10 @@ definitions:
       amount:
         minimum: 1
         type: number
-      from_id:
-        type: string
       to_id:
         type: string
     required:
     - amount
-    - from_id
     - to_id
     type: object
   dto.TransferResponse:
@@ -74,27 +71,6 @@ info:
   title: Denezhki API
   version: "1.0"
 paths:
-  /transfers:
-    post:
-      parameters:
-      - description: Transfer details
-        in: body
-        name: transfer
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TransferRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.TransferResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      summary: Perform a transfer between accounts
-      tags:
-      - Transfer
   /transfers/{id}:
     get:
       parameters:
@@ -296,6 +272,26 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Get all transfers for an account
+      tags:
+      - Transfer
+    post:
+      parameters:
+      - description: Transfer details
+        in: body
+        name: transfer
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransferRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransferResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Perform a transfer between accounts
       tags:
       - Transfer
 swagger: "2.0"

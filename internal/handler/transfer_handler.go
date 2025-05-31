@@ -22,25 +22,31 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 // @Param transfer body dto.TransferRequest true "Transfer details"
 // @Success 200 {object} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
-// @Router /transfers [post]
+// @Router /users/{username}/accounts/{alias}/transfers [post]
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
 
-	err := c.ShouldBindJSON(&req)
+	alias, owner := extractAliasOwner(c)
+	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
+	if err != nil {
+		RespondWithError(c, http.StatusBadRequest, "such alias/username doesn't exist")
+	}
+
+	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, "amount must be >= 1 or ID's aren't of UUID type")
 		return
 	}
 
-	if req.FromID == req.ToID {
+	if account.ID == req.ToID {
 		RespondWithError(c, http.StatusBadRequest, "you can't transfer money to the same account")
 		return
 	}
 
 	transferID := uuid.New()
-	err = h.service.PerformTransfer(c, transferID, req.FromID, req.ToID, req.Amount)
+	err = h.service.PerformTransfer(c, transferID, account.ID, req.ToID, req.Amount)
 	if err != nil {
-		err = h.service.LogTransaction(c, transferID, req.FromID, req.ToID, req.Amount, false)
+		err = h.service.LogTransaction(c, transferID, account.ID, req.ToID, req.Amount, false)
 		if err != nil {
 			RespondWithError(c, http.StatusBadRequest, "couldn't log failed transaction")
 		}

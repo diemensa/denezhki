@@ -15,39 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/transfers": {
-            "post": {
-                "tags": [
-                    "Transfer"
-                ],
-                "summary": "Perform a transfer between accounts",
-                "parameters": [
-                    {
-                        "description": "Transfer details",
-                        "name": "transfer",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.TransferRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TransferResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/transfers/{id}": {
             "get": {
                 "tags": [
@@ -356,6 +323,37 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Perform a transfer between accounts",
+                "parameters": [
+                    {
+                        "description": "Transfer details",
+                        "name": "transfer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransferResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -439,16 +437,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "amount",
-                "from_id",
                 "to_id"
             ],
             "properties": {
                 "amount": {
                     "type": "number",
                     "minimum": 1
-                },
-                "from_id": {
-                    "type": "string"
                 },
                 "to_id": {
                     "type": "string"
