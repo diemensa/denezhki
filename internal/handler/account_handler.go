@@ -40,9 +40,10 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 // @Summary Get account balance
 // @Tags Account
 // @Param username path string true "Username"
-// @Param alias path string true "Account Alias"
+// @Param alias path string true "Account alias"
 // @Success 200 {object} dto.BalanceResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/balance [get]
 func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
@@ -60,9 +61,10 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 // @Summary Get account by alias and owner username
 // @Tags Account
 // @Param username path string true "Username"
-// @Param alias path string true "Account Alias"
+// @Param alias path string true "Account alias"
 // @Success 200 {object} dto.AccountResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts/{alias} [get]
 func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)
@@ -83,10 +85,11 @@ func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 // @Summary Update account balance
 // @Tags Account
 // @Param username path string true "Username"
-// @Param alias path string true "Account Alias"
+// @Param alias path string true "Account alias"
 // @Param balance body dto.BalanceRequest true "Balance update payload"
 // @Success 200 {object} dto.MessageResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/balance [put]
 func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
 	alias, owner := extractAliasOwner(c)

@@ -16,6 +16,10 @@ import (
 // @title Denezhki API
 // @version 1.0
 // @description Banking-like API for managing users and transfers
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	cfg := config.LoadEnv()

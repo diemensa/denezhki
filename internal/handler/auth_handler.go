@@ -15,6 +15,17 @@ func NewAuthHandler(s *usecase.AuthService) *AuthHandler {
 	return &AuthHandler{authService: s}
 }
 
+// HandleLogin godoc
+// @Summary      User login
+// @Description  Authenticate user and return JWT token
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        loginRequest  body      dto.LoginRequest  true  "Login credentials"
+// @Success      200           {object}  dto.LoginResponse
+// @Failure      400           {object}  dto.ErrorResponse  "Invalid request payload"
+// @Failure      401           {object}  dto.ErrorResponse  "Unauthorized - invalid username or password"
+// @Router       /auth/login [post]
 func (h *AuthHandler) HandleLogin(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

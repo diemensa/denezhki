@@ -7,8 +7,59 @@
         "version": "1.0"
     },
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Authenticate user and return JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "loginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid username or password",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/transfers/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -79,6 +130,11 @@
         },
         "/users/{username}/accounts": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "User"
                 ],
@@ -111,6 +167,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "User"
                 ],
@@ -157,6 +218,11 @@
         },
         "/users/{username}/accounts/{alias}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -171,7 +237,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -195,6 +261,11 @@
         },
         "/users/{username}/accounts/{alias}/balance": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -209,7 +280,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -231,6 +302,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -245,7 +321,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -278,6 +354,11 @@
         },
         "/users/{username}/accounts/{alias}/transfers": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -317,6 +398,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -417,6 +503,29 @@
                 }
             }
         },
+        "dto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.MessageResponse": {
             "type": "object",
             "properties": {
@@ -451,6 +560,14 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

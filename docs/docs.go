@@ -15,8 +15,59 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Authenticate user and return JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "loginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid username or password",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/transfers/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -87,6 +138,11 @@ const docTemplate = `{
         },
         "/users/{username}/accounts": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "User"
                 ],
@@ -119,6 +175,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "User"
                 ],
@@ -165,6 +226,11 @@ const docTemplate = `{
         },
         "/users/{username}/accounts/{alias}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -179,7 +245,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -203,6 +269,11 @@ const docTemplate = `{
         },
         "/users/{username}/accounts/{alias}/balance": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -217,7 +288,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -239,6 +310,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Account"
                 ],
@@ -253,7 +329,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -286,6 +362,11 @@ const docTemplate = `{
         },
         "/users/{username}/accounts/{alias}/transfers": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -325,6 +406,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Transfer"
                 ],
@@ -425,6 +511,29 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.MessageResponse": {
             "type": "object",
             "properties": {
@@ -459,6 +568,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -21,6 +21,7 @@ func NewUserHandler(s *usecase.UserService) *UserHandler {
 // @Param username path string true "Username"
 // @Success 200 {array} dto.AccountResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts [get]
 func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 	username := c.Param("username")
@@ -76,6 +77,7 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 // @Success 200 {object} dto.MessageResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts [post]
 func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 	username := c.Param("username")

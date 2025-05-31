@@ -22,6 +22,7 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 // @Param transfer body dto.TransferRequest true "Transfer details"
 // @Success 200 {object} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/transfers [post]
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
@@ -64,6 +65,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 // @Param id path string true "Transfer UUID"
 // @Success 200 {object} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /transfers/{id} [get]
 func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	idParam := c.Param("id")
@@ -91,6 +93,7 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 // @Param alias path string true "Account Alias"
 // @Success 200 {array} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
+// @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/transfers [get]
 func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
