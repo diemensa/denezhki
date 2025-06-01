@@ -81,12 +81,12 @@ func (_c *AccountRepo_GetAccBalanceByID_Call) RunAndReturn(run func(context.Cont
 	return _c
 }
 
-// GetAccByAliasOwner provides a mock function with given fields: c, alias, owner
-func (_m *AccountRepo) GetAccByAliasOwner(c context.Context, alias string, owner string) (*model.Account, error) {
+// GetAccByAliasUsername provides a mock function with given fields: c, alias, owner
+func (_m *AccountRepo) GetAccByAliasUsername(c context.Context, alias string, owner string) (*model.Account, error) {
 	ret := _m.Called(c, alias, owner)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetAccByAliasOwner")
+		panic("no return value specified for GetAccByAliasUsername")
 	}
 
 	var r0 *model.Account
@@ -111,32 +111,32 @@ func (_m *AccountRepo) GetAccByAliasOwner(c context.Context, alias string, owner
 	return r0, r1
 }
 
-// AccountRepo_GetAccByAliasOwner_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAccByAliasOwner'
-type AccountRepo_GetAccByAliasOwner_Call struct {
+// AccountRepo_GetAccByAliasUsername_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAccByAliasUsername'
+type AccountRepo_GetAccByAliasUsername_Call struct {
 	*mock.Call
 }
 
-// GetAccByAliasOwner is a helper method to define mock.On call
+// GetAccByAliasUsername is a helper method to define mock.On call
 //   - c context.Context
 //   - alias string
 //   - owner string
-func (_e *AccountRepo_Expecter) GetAccByAliasOwner(c interface{}, alias interface{}, owner interface{}) *AccountRepo_GetAccByAliasOwner_Call {
-	return &AccountRepo_GetAccByAliasOwner_Call{Call: _e.mock.On("GetAccByAliasOwner", c, alias, owner)}
+func (_e *AccountRepo_Expecter) GetAccByAliasUsername(c interface{}, alias interface{}, owner interface{}) *AccountRepo_GetAccByAliasUsername_Call {
+	return &AccountRepo_GetAccByAliasUsername_Call{Call: _e.mock.On("GetAccByAliasUsername", c, alias, owner)}
 }
 
-func (_c *AccountRepo_GetAccByAliasOwner_Call) Run(run func(c context.Context, alias string, owner string)) *AccountRepo_GetAccByAliasOwner_Call {
+func (_c *AccountRepo_GetAccByAliasUsername_Call) Run(run func(c context.Context, alias string, owner string)) *AccountRepo_GetAccByAliasUsername_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(string), args[2].(string))
 	})
 	return _c
 }
 
-func (_c *AccountRepo_GetAccByAliasOwner_Call) Return(_a0 *model.Account, _a1 error) *AccountRepo_GetAccByAliasOwner_Call {
+func (_c *AccountRepo_GetAccByAliasUsername_Call) Return(_a0 *model.Account, _a1 error) *AccountRepo_GetAccByAliasUsername_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AccountRepo_GetAccByAliasOwner_Call) RunAndReturn(run func(context.Context, string, string) (*model.Account, error)) *AccountRepo_GetAccByAliasOwner_Call {
+func (_c *AccountRepo_GetAccByAliasUsername_Call) RunAndReturn(run func(context.Context, string, string) (*model.Account, error)) *AccountRepo_GetAccByAliasUsername_Call {
 	_c.Call.Return(run)
 	return _c
 }

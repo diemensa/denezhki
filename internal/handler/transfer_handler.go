@@ -19,6 +19,8 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 // HandleTransfer
 // @Summary Perform a transfer between accounts
 // @Tags Transfer
+// @Param username path string true "Username"
+// @Param alias path string true "Account alias"
 // @Param transfer body dto.TransferRequest true "Transfer details"
 // @Success 200 {object} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
@@ -27,8 +29,15 @@ func NewTransferHandler(s *usecase.TransferService) *TransferHandler {
 func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 	var req dto.TransferRequest
 
-	alias, owner := extractAliasOwner(c)
-	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
+	alias, username := ExtractAliasUsername(c)
+
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	account, err := h.service.GetAccByAliasUsername(c, alias, username)
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, "such alias/username doesn't exist")
 	}
@@ -90,16 +99,22 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 // @Summary Get all transfers for an account
 // @Tags Transfer
 // @Param username path string true "Username"
-// @Param alias path string true "Account Alias"
+// @Param alias path string true "Account alias"
 // @Success 200 {array} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/transfers [get]
 func (h *TransferHandler) HandleGetAllAccTransfers(c *gin.Context) {
 
-	alias, owner := extractAliasOwner(c)
+	alias, username := ExtractAliasUsername(c)
 
-	transfers, err := h.service.GetAllAccountTransfers(c, alias, owner)
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	transfers, err := h.service.GetAllAccountTransfers(c, alias, username)
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, err.Error())
 		return

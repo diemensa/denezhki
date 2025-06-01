@@ -17,13 +17,13 @@ func JWTMiddleware(s *usecase.AuthService) gin.HandlerFunc {
 		}
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-		userID, err := s.ValidateToken(tokenStr)
+		username, err := s.ValidateToken(tokenStr)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
 			return
 		}
 
-		c.Set("userID", userID)
+		c.Set("username", username)
 		c.Next()
 	}
 }

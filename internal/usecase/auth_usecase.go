@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -21,7 +20,7 @@ func NewAuthService(u *UserService, secret string) *AuthService {
 }
 
 func (a *AuthService) Login(c context.Context, username, password string) (string, error) {
-	user, err := a.userService.GetUserByUsername(c, username)
+	_, err := a.userService.GetUserByUsername(c, username)
 	if err != nil {
 		return "", fmt.Errorf("incorrect username or password")
 	}
@@ -31,7 +30,7 @@ func (a *AuthService) Login(c context.Context, username, password string) (strin
 		return "", fmt.Errorf("incorrect username or password")
 	}
 
-	token, err := a.generateToken(user.ID)
+	token, err := a.generateToken(username)
 	if err != nil {
 		return "", fmt.Errorf("couldn't generate JWT token")
 	}
@@ -39,16 +38,16 @@ func (a *AuthService) Login(c context.Context, username, password string) (strin
 	return token, nil
 }
 
-func (a *AuthService) generateToken(userID uuid.UUID) (string, error) {
+func (a *AuthService) generateToken(username string) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userID.String(),
-		"exp":     time.Now().Add(72 * time.Hour).Unix(),
+		"username": username,
+		"exp":      time.Now().Add(72 * time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(a.jwtSecret))
 }
 
-func (a *AuthService) ValidateToken(tokenString string) (userID uuid.UUID, err error) {
+func (a *AuthService) ValidateToken(tokenString string) (username string, err error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 
@@ -59,27 +58,22 @@ func (a *AuthService) ValidateToken(tokenString string) (userID uuid.UUID, err e
 	})
 
 	if err != nil {
-		return uuid.Nil, err
+		return "", err
 	}
 
 	if !token.Valid {
-		return uuid.Nil, fmt.Errorf("invalid token")
+		return "", fmt.Errorf("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return uuid.Nil, fmt.Errorf("invalid token claims")
+		return "", fmt.Errorf("invalid token claims")
 	}
 
-	userIDStr, ok := claims["user_id"].(string)
+	tokenUser, ok := claims["username"].(string)
 	if !ok {
-		return uuid.Nil, fmt.Errorf("user_id not found in token claims")
+		return "", fmt.Errorf("username not found in token claims")
 	}
 
-	userID, err = uuid.Parse(userIDStr)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("invalid user_id in token claims")
-	}
-
-	return userID, nil
+	return tokenUser, nil
 }

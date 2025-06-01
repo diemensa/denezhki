@@ -25,6 +25,13 @@ func NewUserHandler(s *usecase.UserService) *UserHandler {
 // @Router /users/{username}/accounts [get]
 func (h *UserHandler) HandleGetUserAccounts(c *gin.Context) {
 	username := c.Param("username")
+
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
 	user, err := h.service.GetUserByUsername(c, username)
 
 	if err != nil {
@@ -82,9 +89,15 @@ func (h *UserHandler) HandleCreateUser(c *gin.Context) {
 func (h *UserHandler) HandleCreateAccount(c *gin.Context) {
 	username := c.Param("username")
 
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
 	var req dto.CreateAccountRequest
 
-	err := c.ShouldBindJSON(&req)
+	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, "something's wrong with the alias")
 		return

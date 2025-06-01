@@ -242,7 +242,7 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Get account by alias and owner username
+      summary: Get account by alias and username
       tags:
       - Account
   /users/{username}/accounts/{alias}/balance:
@@ -312,7 +312,7 @@ paths:
         name: username
         required: true
         type: string
-      - description: Account Alias
+      - description: Account alias
         in: path
         name: alias
         required: true
@@ -335,6 +335,16 @@ paths:
       - Transfer
     post:
       parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Account alias
+        in: path
+        name: alias
+        required: true
+        type: string
       - description: Transfer details
         in: body
         name: transfer

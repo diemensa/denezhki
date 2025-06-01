@@ -55,9 +55,9 @@ func (s *AccountService) GetAccBalanceByID(c context.Context, id uuid.UUID) (flo
 	return balance, nil
 }
 
-func (s *AccountService) GetAccByAliasOwner(c context.Context, alias, owner string) (*model.Account, error) {
+func (s *AccountService) GetAccByAliasUsername(c context.Context, alias, username string) (*model.Account, error) {
 
-	return s.accountRepo.GetAccByAliasOwner(c, alias, owner)
+	return s.accountRepo.GetAccByAliasUsername(c, alias, username)
 }
 
 func (s *AccountService) UpdateAccBalance(c context.Context, id uuid.UUID, newBal float64) error {

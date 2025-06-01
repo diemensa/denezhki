@@ -122,7 +122,7 @@ func TestTransferService_GetAllAccountTransfers(t *testing.T) {
 		Balance: 200,
 	}
 
-	mockAccountRepo.On("GetAccByAliasOwner", c, alias, owner).Return(account, nil)
+	mockAccountRepo.On("GetAccByAliasUsername", c, alias, owner).Return(account, nil)
 	mockTransRepo.On("GetAllAccountTransfers", c, account.ID).Return(expectedRet, nil)
 
 	service := usecase.NewTransferService(mockAccountRepo, mockTransRepo, mockCacheRepo, cacheTTL)

@@ -96,7 +96,7 @@ func (repo *AccPostgresRepo) UpdateAccBalance(c context.Context, id uuid.UUID, n
 
 }
 
-func (repo *AccPostgresRepo) GetAccByAliasOwner(c context.Context, alias, owner string) (*model.Account, error) {
+func (repo *AccPostgresRepo) GetAccByAliasUsername(c context.Context, alias, owner string) (*model.Account, error) {
 	var account model.Account
 
 	if err := repo.db.WithContext(c).

@@ -12,7 +12,7 @@ func SetupTransferRouters(rg *gin.RouterGroup, s *usecase.TransferService) {
 
 	handler := NewTransferHandler(s)
 
-	// rg.GET("/transfers/:id", handler.HandleGetTransferByID)
+	rg.GET("/transfers/:id", handler.HandleGetTransferByID)
 	rg.GET("/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
 	rg.POST("/:username/accounts/:alias/transfers", handler.HandleTransfer)
 
@@ -29,7 +29,7 @@ func SetupUserAccRouters(rg *gin.RouterGroup,
 	rg.POST("/:username/accounts/", handlerUser.HandleCreateAccount)
 
 	// Account Handlers
-	rg.GET("/:username/accounts/:alias", handlerAccount.HandleGetAccByAliasOwner)
+	rg.GET("/:username/accounts/:alias", handlerAccount.HandleGetAccByAliasUsername)
 	rg.GET("/:username/accounts/:alias/balance", handlerAccount.HandleGetAccBalance)
 	rg.PUT("/:username/accounts/:alias/balance", handlerAccount.HandleUpdateBalance)
 

@@ -73,7 +73,7 @@ func (s *TransferService) GetAllAccountTransfers(
 	c context.Context,
 	alias, owner string) ([]model.Transaction, error) {
 
-	account, err := s.accountRepo.GetAccByAliasOwner(c, alias, owner)
+	account, err := s.accountRepo.GetAccByAliasUsername(c, alias, owner)
 
 	if err != nil {
 		return nil, err
@@ -89,8 +89,8 @@ func (s *TransferService) LogTransaction(c context.Context,
 	return s.transactionRepo.LogTransaction(c, transactionID, fromID, toID, amount, success)
 }
 
-func (s *TransferService) GetAccByAliasOwner(c context.Context, alias, owner string) (*model.Account, error) {
-	return s.accountRepo.GetAccByAliasOwner(c, alias, owner)
+func (s *TransferService) GetAccByAliasUsername(c context.Context, alias, username string) (*model.Account, error) {
+	return s.accountRepo.GetAccByAliasUsername(c, alias, username)
 }
 
 func updateBalanceCache(c context.Context, cacheRepo repository.CacheRepo,

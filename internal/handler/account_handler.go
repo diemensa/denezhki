@@ -46,8 +46,15 @@ func (h *AccountHandler) HandleGetAccByID(c *gin.Context) {
 // @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/balance [get]
 func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
-	alias, owner := extractAliasOwner(c)
-	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
+	alias, username := ExtractAliasUsername(c)
+
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	account, err := h.service.GetAccByAliasUsername(c, alias, username)
 
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, err.Error())
@@ -57,8 +64,8 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.BalanceResponse{Balance: account.Balance})
 }
 
-// HandleGetAccByAliasOwner
-// @Summary Get account by alias and owner username
+// HandleGetAccByAliasUsername
+// @Summary Get account by alias and username
 // @Tags Account
 // @Param username path string true "Username"
 // @Param alias path string true "Account alias"
@@ -66,10 +73,16 @@ func (h *AccountHandler) HandleGetAccBalance(c *gin.Context) {
 // @Failure 400 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{username}/accounts/{alias} [get]
-func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
-	alias, owner := extractAliasOwner(c)
+func (h *AccountHandler) HandleGetAccByAliasUsername(c *gin.Context) {
+	alias, username := ExtractAliasUsername(c)
 
-	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	account, err := h.service.GetAccByAliasUsername(c, alias, username)
 
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, err.Error())
@@ -92,10 +105,17 @@ func (h *AccountHandler) HandleGetAccByAliasOwner(c *gin.Context) {
 // @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/balance [put]
 func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
-	alias, owner := extractAliasOwner(c)
+	alias, username := ExtractAliasUsername(c)
+
+	err := CheckUserMatch(c, username)
+	if err != nil {
+		RespondWithError(c, http.StatusForbidden, err.Error())
+		return
+	}
+
 	var req dto.BalanceRequest
 
-	account, err := h.service.GetAccByAliasOwner(c, alias, owner)
+	account, err := h.service.GetAccByAliasUsername(c, alias, username)
 
 	if err != nil {
 		RespondWithError(c, http.StatusBadRequest, err.Error())
@@ -115,8 +135,4 @@ func (h *AccountHandler) HandleUpdateBalance(c *gin.Context) {
 	}
 
 	RespondWithMessage(c, http.StatusOK, "balance updated")
-}
-
-func extractAliasOwner(c *gin.Context) (alias, owner string) {
-	return c.Param("alias"), c.Param("username")
 }

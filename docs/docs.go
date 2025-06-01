@@ -234,7 +234,7 @@ const docTemplate = `{
                 "tags": [
                     "Account"
                 ],
-                "summary": "Get account by alias and owner username",
+                "summary": "Get account by alias and username",
                 "parameters": [
                     {
                         "type": "string",
@@ -381,7 +381,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Account Alias",
+                        "description": "Account alias",
                         "name": "alias",
                         "in": "path",
                         "required": true
@@ -416,6 +416,20 @@ const docTemplate = `{
                 ],
                 "summary": "Perform a transfer between accounts",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Account alias",
+                        "name": "alias",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Transfer details",
                         "name": "transfer",

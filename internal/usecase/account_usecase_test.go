@@ -101,11 +101,11 @@ func TestAccountService_GetAccByAliasOwner(t *testing.T) {
 	mockAccRepo := mocks.NewAccountRepo(t)
 	mockCacheRepo := mocks.NewCacheRepo(t)
 
-	mockAccRepo.On("GetAccByAliasOwner", c, alias, owner).Return(expectedAcc, nil)
+	mockAccRepo.On("GetAccByAliasUsername", c, alias, owner).Return(expectedAcc, nil)
 
 	service := usecase.NewAccountService(mockAccRepo, mockCacheRepo, 3*time.Minute)
 
-	result, err := service.GetAccByAliasOwner(c, alias, owner)
+	result, err := service.GetAccByAliasUsername(c, alias, owner)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedAcc, result)
