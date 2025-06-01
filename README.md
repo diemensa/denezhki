@@ -29,6 +29,16 @@ denezhki - это простой сервис для управления бан
 
 
 ### Инструкция
+### Linux/MacOS
+1. Клонировать репозиторий:
+   ```bash
+   git clone https://github.com/diemensa/denezhki
+   cd denezhki
+2. Запустить тесты и приложение:
+   ```bash
+   make
+   
+### Windows
 1. Клонировать репозиторий:
    ```bash
    git clone https://github.com/diemensa/denezhki
