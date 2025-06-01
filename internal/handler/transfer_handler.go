@@ -74,7 +74,6 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 // @Param id path string true "Transfer UUID"
 // @Success 200 {object} dto.TransferResponse
 // @Failure 400 {object} dto.ErrorResponse
-// @Security BearerAuth
 // @Router /transfers/{id} [get]
 func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 	idParam := c.Param("id")

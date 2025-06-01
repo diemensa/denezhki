@@ -8,17 +8,16 @@ import (
 	"net/http"
 )
 
-func SetupTransferRouters(rg *gin.RouterGroup, s *usecase.TransferService) {
+func SetupTransferRoutes(rg *gin.RouterGroup, s *usecase.TransferService) {
 
 	handler := NewTransferHandler(s)
 
-	rg.GET("/transfers/:id", handler.HandleGetTransferByID)
 	rg.GET("/:username/accounts/:alias/transfers", handler.HandleGetAllAccTransfers)
 	rg.POST("/:username/accounts/:alias/transfers", handler.HandleTransfer)
 
 }
 
-func SetupUserAccRouters(rg *gin.RouterGroup,
+func SetupUserAccRoutes(rg *gin.RouterGroup,
 	userServ *usecase.UserService, accountServ *usecase.AccountService) {
 
 	handlerUser := NewUserHandler(userServ)
@@ -35,15 +34,17 @@ func SetupUserAccRouters(rg *gin.RouterGroup,
 
 }
 
-func SetupAuthRouters(r *gin.Engine, s *usecase.AuthService, us *usecase.UserService) {
+func SetupPublicRoutes(r *gin.Engine, s *usecase.AuthService, us *usecase.UserService, ts *usecase.TransferService) {
 	handlerAuth := NewAuthHandler(s)
 	handlerUser := NewUserHandler(us)
+	handlerTransfer := NewTransferHandler(ts)
 
 	r.POST("/auth/login", handlerAuth.HandleLogin)
 	r.POST("/users", handlerUser.HandleCreateUser)
+	r.GET("/transfers/:id", handlerTransfer.HandleGetTransferByID) // это типа блокчейн где все видят трансферы))
 }
 
-func SetupDocsRouters(r *gin.Engine) {
+func SetupDocsRoutes(r *gin.Engine) {
 	r.GET("/docs", func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
 	})

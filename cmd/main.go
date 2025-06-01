@@ -47,10 +47,10 @@ func main() {
 	authorized := r.Group("/users/")
 	authorized.Use(authMiddleware)
 
-	handler.SetupTransferRouters(authorized, transferService)
-	handler.SetupUserAccRouters(authorized, userService, accountService)
-	handler.SetupAuthRouters(r, authService, userService)
-	handler.SetupDocsRouters(r)
+	handler.SetupTransferRoutes(authorized, transferService)
+	handler.SetupUserAccRoutes(authorized, userService, accountService)
+	handler.SetupPublicRoutes(r, authService, userService, transferService)
+	handler.SetupDocsRoutes(r)
 
 	if err = r.Run(":" + cfg.Port); err != nil {
 		log.Fatalf("Failed to run server: %v", err)

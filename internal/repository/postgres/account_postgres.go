@@ -18,8 +18,7 @@ func NewAccPostgresRepo(db *gorm.DB) *AccPostgresRepo {
 
 func (repo *AccPostgresRepo) GetAccByID(c context.Context, id uuid.UUID) (*model.Account, error) {
 	var account model.Account
-	err := repo.db.WithContext(c).First(&account, "id = ?", id).Error
-	if err != nil {
+	if err := repo.db.WithContext(c).First(&account, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	return &account, nil
@@ -42,17 +41,17 @@ func (repo *AccPostgresRepo) GetUserByAccID(c context.Context, id uuid.UUID) (*m
 
 }
 
-func (repo *AccPostgresRepo) GetUserByAccOwner(c context.Context, owner string) (*model.User, error) {
+func (repo *AccPostgresRepo) GetUserByAccOwner(c context.Context, username string) (*model.User, error) {
 	var user model.User
 
-	if owner == "" {
-		return nil, errors.New("owner parameter is empty")
+	if username == "" {
+		return nil, errors.New("username parameter is empty")
 	}
 
 	err := repo.db.WithContext(c).
 		Table("users").
 		Joins("JOIN accounts ON accounts.user_id = users.id").
-		Where("accounts.owner = ?", owner).
+		Where("accounts.owner = ?", username).
 		First(&user).Error
 
 	if err != nil {
@@ -83,24 +82,18 @@ func (repo *AccPostgresRepo) UpdateAccBalance(c context.Context, id uuid.UUID, n
 		return errors.New("new balance is negative")
 	}
 
-	err := repo.db.WithContext(c).
+	return repo.db.WithContext(c).
 		Model(&model.Account{}).
 		Where("id = ?", id).
 		Update("balance", newBal).Error
 
-	if err != nil {
-		return err
-	}
-
-	return nil
-
 }
 
-func (repo *AccPostgresRepo) GetAccByAliasUsername(c context.Context, alias, owner string) (*model.Account, error) {
+func (repo *AccPostgresRepo) GetAccByAliasUsername(c context.Context, alias, username string) (*model.Account, error) {
 	var account model.Account
 
 	if err := repo.db.WithContext(c).
-		Where("alias = ? AND owner = ?", alias, owner).First(&account).Error; err != nil {
+		Where("alias = ? AND owner = ?", alias, username).First(&account).Error; err != nil {
 		return nil, err
 	}
 

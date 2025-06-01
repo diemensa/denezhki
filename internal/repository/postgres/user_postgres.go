@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/diemensa/denezhki/internal/repository/postgres/model"
 	"github.com/google/uuid"
@@ -56,17 +55,13 @@ func (repo *UserPostgresRepo) GetUserAccounts(c context.Context, userID uuid.UUI
 }
 
 func (repo *UserPostgresRepo) CreateUser(c context.Context, username, password string) error {
-
 	user := model.NewUser(username, password)
-
 	err := repo.db.WithContext(c).Create(&user).Error
 
 	if err != nil {
-
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") &&
 			strings.Contains(err.Error(), "idx_users_username") {
-			return errors.New(fmt.Sprintf(`username "%s" is already taken`, username))
-
+			return fmt.Errorf(`username "%s" is already taken`, username)
 		}
 
 		return err
@@ -84,7 +79,7 @@ func (repo *UserPostgresRepo) CreateAccount(c context.Context, userID uuid.UUID,
 
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") &&
 			strings.Contains(err.Error(), "idx_owner_alias") {
-			return errors.New(fmt.Sprintf(`user "%s" already has account named "%s"`, username, alias))
+			return fmt.Errorf(`user "%s" already has account named "%s"`, username, alias)
 
 		}
 
