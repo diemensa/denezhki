@@ -72,7 +72,7 @@ func (h *TransferHandler) HandleTransfer(c *gin.Context) {
 // @Summary Get transfer details by ID
 // @Tags Transfer
 // @Param id path string true "Transfer UUID"
-// @Success 200 {object} dto.TransferResponse
+// @Success 200 {object} model.Transaction
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /transfers/{id} [get]
 func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
@@ -99,7 +99,7 @@ func (h *TransferHandler) HandleGetTransferByID(c *gin.Context) {
 // @Tags Transfer
 // @Param username path string true "Username"
 // @Param alias path string true "Account alias"
-// @Success 200 {array} dto.TransferResponse
+// @Success 200 {array} model.Transaction
 // @Failure 400 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{username}/accounts/{alias}/transfers [get]

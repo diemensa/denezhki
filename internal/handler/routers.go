@@ -41,7 +41,7 @@ func SetupPublicRoutes(r *gin.Engine, s *usecase.AuthService, us *usecase.UserSe
 
 	r.POST("/auth/login", handlerAuth.HandleLogin)
 	r.POST("/users", handlerUser.HandleCreateUser)
-	r.GET("/transfers/:id", handlerTransfer.HandleGetTransferByID) // это типа блокчейн где все видят трансферы))
+	r.GET("/transfers/:id", handlerTransfer.HandleGetTransferByID) // наш банк не имеет секретов
 }
 
 func SetupDocsRoutes(r *gin.Engine) {

@@ -71,9 +71,9 @@ func (s *TransferService) GetTransferByID(c context.Context,
 
 func (s *TransferService) GetAllAccountTransfers(
 	c context.Context,
-	alias, owner string) ([]model.Transaction, error) {
+	alias, username string) ([]model.Transaction, error) {
 
-	account, err := s.accountRepo.GetAccByAliasUsername(c, alias, owner)
+	account, err := s.accountRepo.GetAccByAliasUsername(c, alias, username)
 
 	if err != nil {
 		return nil, err
