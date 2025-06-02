@@ -47,7 +47,7 @@ func (a *AuthService) generateToken(username string) (string, error) {
 	return token.SignedString([]byte(a.jwtSecret))
 }
 
-func (a *AuthService) ValidateToken(tokenString string) (username string, err error) {
+func (a *AuthService) ValidateToken(tokenString string) (string, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 
